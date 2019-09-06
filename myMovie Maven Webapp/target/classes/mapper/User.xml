@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.UserDao">
+	<select id="getUserByuserId" resultType="User" parameterType="int">
+        select * from user where user_Id=#{user_Id}
+    </select>   
+    <select id="getUserByuserName" resultType="User" parameterType="String">
+        select * from user where user_Name=#{user_Name}
+    </select>  
+    <select id="getUserList" resultType="User">
+    	select * from user        
+    </select>
+    
+    <!-- 修改用户 -->
+  	<update id="updateUser" parameterType="User">
+  		update user
+  		<set>  				
+			<if test="user_Name!=null">
+				user_Name=#{user_Name},
+			</if>
+			<if test="user_Email!=null">
+				user_Email=#{user_Email},
+			</if>
+			<if test="user_Tel!=null">
+				user_Tel=#{user_Tel},
+			</if>
+			<if test="user_QQ!=null">
+				user_QQ=#{user_QQ},
+			</if>				 	
+		</set>  		
+  			where user_Id=#{user_Id}  		
+  	</update>
+  	
+  	<!-- 删除用户 -->
+     <delete id="deleteUserByUserId" parameterType="Integer">
+        delete from user where user_Id=#{user_Id}
+     </delete>
+
+<!-- 分页 -->
+  	<!-- 分页所用到的结果集 -->
+	<resultMap type="User" id="UserPageInfo">
+   		<id column="user_Id" property="user_Id"/>
+ 		<result column="user_Name" property="user_Name" />
+  		<result column="user_Tel" property="user_Tel"/>
+  		<result column="userEmail" property="userEmail"/>
+  		<result column="user_QQ" property="user_QQ"/>
+	</resultMap>
+	
+	<!-- 用于分页，每页显示10条数据 -->
+	<select id="selectUserByPage" resultMap="UserPageInfo">
+		select * from user limit #{startPos},#{pageSize}			
+	</select>
+	
+	<!-- 用于获取总页数 -->	
+	<select id="getUserCount" resultType="int" >
+       select  count(*) from user
+    </select>
+    <!-- 根据video名字查询video列表(分页显示) -->
+	<select id="selectVideoPageByName" resultType="Video">
+	<bind name="key_offset" value="(currentPageNo-1)*pageSize"></bind>
+		select * from video
+			<trim prefix="where" prefixOverrides="and|or">			
+			<if test="video_Name!=null and video_Name!=''">
+				and video_Name like CONCAT('%',#{video_Name},'%')
+			</if>
+			 order by video_Season ASC			
+			</trim>	
+			limit #{key_offset},#{pageSize}
+	</select>
+	<!-- 用于获取video总数 -->	
+	<select id="getVideoCount" resultType="int" >
+       select  count(*) from video
+       <trim prefix="where" prefixOverrides="and|or">
+			<if test="video_Name!=null and video_Name!=''">
+				and video_Name like CONCAT('%',#{video_Name},'%')
+			</if>	
+			</trim>	
+    </select>
+    <!-- 根据用户ID获取用户观看历史记录  -->
+    <!--
+    <resultMap id="userResult" type="User">
+    		<result column="u_user_Id" property="user_Id"/>    		
+ 			<result column="user_Name" property="user_Name" />
+  			<result column="user_Tel" property="user_Tel"/>
+  			<result column="userEmail" property="userEmail"/>
+  		    <result column="user_QQ" property="user_QQ"/> 
+  	</resultMap> 
+  	<resultMap id="DiaryMap" type="com.movie.pojo.History">  
+  			<result property="history_Id" column="history_Id" />     	
+		   	<result property="history_LastTime" column="history_LastTime" javaType="java.sql.Date"/>
+		    <result property="userId" column="userId" />
+		    <result property="videoId" column="videoId"/>
+		    <association property="user" javaType="com.movie.pojo.User" resultMap="userResult" ></association>
+        	<collection property="vList" ofType="Video" >
+	        	<result property="video_Id" column="v_video_Id"/>
+				<result property="video_Name" column="video_Name"/>
+				<result property="video_BigType" column="video_BigType"/>
+				<result property="video_Season" column="video_Season"/>
+				<result property="video_Duration" column="video_Duration"/>
+				<result property="video_KeyWords" column="video_KeyWords"/>
+				<result property="video_PictureAddress" column="video_PictureAddress"/>
+				<result property="video_Address" column="video_Address"/>
+		</collection>	          		           
+  </resultMap>
+  <select id="findAllByuserId" parameterType="Integer" resultMap="DiaryMap">
+        select h.*,
+        u.user_Id as u_user_Id,
+        v.video_Id as v_video_Id,v.video_Name,v.video_BigType,v.video_Season,
+        v.video_Duration,v.video_KeyWords,v.video_PictureAddress,v.video_Address
+		from history h inner join user u on h.userId=u.user_Id inner join video v on h.videoId=v.video_Id 
+		where u.user_Id=#{user_Id}
+	    order by h.history_LastTime DESC
+    </select>
+    -->
+     
+    <resultMap type="com.movie.pojo.History" id="ClassResultMap3">
+        <id property="history_Id" column="history_Id" />     	
+	   	<result property="history_LastTime" column="history_LastTime" javaType="java.sql.Date"/>
+	    <result property="userId" column="userId" />
+	    <result property="videoId" column="videoId"/>
+        <association property="user" javaType="com.movie.pojo.User">
+            <id property="user_Id" column="user_Id"/>    		
+ 			<result column="user_Name" property="user_Name" />
+  			<result column="user_Tel" property="user_Tel"/>
+  			<result column="userEmail" property="userEmail"/>
+  		    <result column="user_QQ" property="user_QQ"/> 
+        </association>          
+        <!-- ofType指定Video集合中的对象类型 -->
+        <collection property="vList" ofType="com.movie.pojo.Video">
+            <id property="video_Id" column="video_Id"/>
+			<result property="video_Name" column="video_Name"/>
+			<result property="video_BigType" column="video_BigType"/>
+			<result property="video_Season" column="video_Season"/>
+			<result property="video_Published" column="video_Published"/>
+			<result property="video_Duration" column="video_Duration"/>
+			<result property="video_KeyWords" column="video_KeyWords"/>
+			<result property="video_PictureAddress" column="video_PictureAddress"/>
+			<result property="video_Address" column="video_Address"/>
+        </collection>
+    </resultMap>
+	<select id="findAllByuserId" parameterType="int" resultMap="ClassResultMap3">
+		select * from history h, user u,video v 
+		where h.userId=u.user_Id and h.videoId=v.video_Id  and h.userId=#{userId}
+		order by h.history_LastTime DESC        
+    </select>
+  
+  
+    <!-- 用于获取总观看历史数目 -->	
+	<select id="getHistoryCount" resultType="int" >
+       select  count(*) from history where userId=#{userId}
+    </select>
+    <!-- 根据用户ID获取用户下载记录  -->
+    
+    <resultMap id="downloadResult" type="User">
+    		<result column="u_user_Id" property="user_Id"/>    		
+ 			<result column="user_Name" property="user_Name" />
+  			<result column="user_Tel" property="user_Tel"/>
+  			<result column="userEmail" property="userEmail"/>
+  		    <result column="user_QQ" property="user_QQ"/> 
+  	</resultMap> 
+  	<resultMap id="DownloadList" type="Download">  
+  			<result property="download_Id" column="download_Id" />  	
+		    <result property="userId" column="userId" />
+		    <result property="videoId" column="videoId"/>
+		    <association property="user" javaType="User" resultMap="downloadResult" ></association>
+        	<collection property="vList" ofType="Video" >
+	        	<result property="video_Id" column="v_video_Id"/>
+				<result property="video_Name" column="video_Name"/>
+				<result property="video_BigType" column="video_BigType"/>
+				<result property="video_Season" column="video_Season"/>
+				<result property="video_Published" column="video_Published"/>
+				<result property="video_Duration" column="video_Duration"/>
+				<result property="video_KeyWords" column="video_KeyWords"/>
+				<result property="video_PictureAddress" column="video_PictureAddress"/>
+				<result property="video_Address" column="video_Address"/>
+		</collection>	          		           
+  </resultMap>
+  <select id="findDownloadByuserId" parameterType="Integer" resultMap="DownloadList">
+        select d.*,
+        u.user_Id as u_user_Id,
+        v.video_Id as v_video_Id,v.video_Name,v.video_BigType,v.video_Season,
+        v.video_Duration,v.video_KeyWords,v.video_PictureAddress,v.video_Address
+		from download d inner join user u on d.userId=u.user_Id inner join video v on d.videoId=v.video_Id 
+		where u.user_Id=#{user_Id}	   
+    </select>
+    <!-- 用于获取总下载数目 -->	
+	<select id="getDownloadCount" resultType="int" >
+       select  count(*) from download where userId=#{userId}
+    </select>
+    <!-- 用户更新密码 -->	
+    <update id="updateUserPassword">
+    	update user set user_Password=#{userPassword}
+    	where user_Id=#{userId}		
+    </update>
+
+</mapper>

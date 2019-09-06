@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.ViewDao">	
+	<resultMap type="com.movie.pojo.View" id="ViewResultMap2">
+		<id property="view_Id" column="view_Id"/>
+		<result property="view_Date" column="view_Date"/>
+		<result property="view_Detail" column="view_Detail"/>
+		<result property="userId" column="userId"/>
+		<result property="videoId" column="videoId"/>
+		<association property="user" javaType="com.movie.pojo.User">
+			<id property="user_Id" column="user_Id"/>
+			<result property="user_Name" column="user_Name"/>
+		</association>
+		<collection property="viewList" ofType="com.movie.pojo.Video">
+			<id property="video_Id" column="video_Id"/>
+			<result property="video_Name" column="video_Name"/>
+			<result property="video_BigType" column="video_BigType"/>
+			<result property="video_Season" column="video_Season"/>
+			<result property="video_Published" column="video_Published"/>
+			<result property="video_Duration" column="video_Duration"/>
+			<result property="video_KeyWords" column="video_KeyWords"/>
+			<result property="video_PictureAddress" column="video_PictureAddress"/>
+			<result property="video_Address" column="video_Address"/>
+		</collection>
+	</resultMap>
+	<!-- (用于分页，每页显示10条数据)根据userId分页获取评论 -->
+	<select id="selectViewByPage" resultMap="ViewResultMap2">
+		 select * from view vi, user u,video v 
+		 where vi.userId=u.user_Id and vi.videoId=v.video_Id  and vi.userId=#{userId}
+		 order by vi.view_Date DESC limit #{startPos},#{pageSize}
+	</select>
+	<!-- 用于获取用户评论数 -->
+	<select id="getViewCountByuserId" parameterType="Integer" resultType="int">
+		select count(*) from view where userId=#{userId}
+	</select>
+	<!-- (用于分页，每页显示10条数据)管理页面分页获取评论 -->
+	<select id="selectViewsWithAdmin" resultMap="ViewResultMap2">
+		 select * from view vi, user u,video v 
+		 where vi.userId=u.user_Id and vi.videoId=v.video_Id
+		 order by vi.view_Date DESC limit #{startPos},#{pageSize}
+	</select>
+	<!-- 用于获取用户评论数 -->
+	<select id="getViewCountWithAdmin" resultType="int">
+		select count(*) from view
+	</select>
+	<!--用户根据viewID数组批量删除  -->
+	<delete id="delViewByviewIdArray">
+		delete from view
+		where view_Id in
+		<foreach collection="view_IdArray" item="view_IdArray" open="(" close=")" separator=",">
+			#{view_IdArray}
+		</foreach>
+	</delete>
+	<!--管理员根据viewID数组批量删除  -->
+	<delete id="delViewByviewIdArrayWithAdmin">
+		delete from view
+		where view_Id in
+		<foreach collection="view_IdArrayAdmin" item="view_IdArrayAdmin" open="(" close=")" separator=",">
+			#{view_IdArrayAdmin}
+		</foreach>
+	</delete>
+	<!--登录用户发表评论  -->
+	<insert id="addViewByuserId"  parameterType="View">
+		insert into view(view_Date,view_Detail,userId,videoId)
+		values(#{view_Date},#{view_Detail},#{userId},#{videoId})
+	</insert>
+	<!-- (用于分页，每页显示10条数据)根据videoId分页获取评论 -->
+	<select id="getViewByvideoId" resultMap="ViewResultMap2">
+		 select * from view vi inner join user u on vi.userId=u.user_Id inner join video v on vi.videoId=v.video_Id
+		 where vi.videoId=#{videoId}
+		 order by vi.view_Date DESC limit #{startPos},#{pageSize}
+	</select>
+	<!-- 用于获取用户评论数 -->
+	<select id="getViewCountByvideoId" parameterType="Integer" resultType="int">
+		select count(*) from view where videoId=#{videoId}
+	</select>
+</mapper>

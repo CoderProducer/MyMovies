@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.NewSearchDao">
+<resultMap type="News" id="newsList">
+	<id property="news_Id" column="news_Id"/>
+	<result property="news_PictureAddress" column="news_PictureAddress"/>
+	<result property="news_Title" column="news_Title"/>
+	<result property="news_VideoTitle" column="news_VideoTitle"/>
+	<result property="news_Introduce" column="news_Introduce"/>
+	<result property="news_Date" column="news_Date"/>
+</resultMap>
+<!-- 获取最新20新闻集合 -->
+<select id="getNewsList" resultMap="newsList">
+	select * from news order by news_Date limit 20
+</select>
+<!-- 获取新闻总数 -->
+<select id="getNewsCount" resultType="int">
+	select count(*) from news
+</select>
+  <!-- 管理员分页获取新闻集合 -->
+ <select id="selectNewsWithAdmin" resultType="News" parameterType="int">
+ 	select * from news order by news_Date limit #{startPos},#{pageSize}
+ </select>
+ <!--管理员根据newID数组批量删除新闻  -->
+ <delete id="delNewsBynewsIdArrayWithAdmin">
+	delete from news
+	where news_Id in
+	<foreach collection="news_IdArrayAdmin" item="news_IdArrayAdmin" open="(" close=")" separator=",">
+		#{news_IdArrayAdmin}
+	</foreach>
+ </delete>
+
+</mapper>

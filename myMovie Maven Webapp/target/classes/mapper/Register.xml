@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.movie.dao.RegisterDao">
+<!-- 注册时检测用户名是否可用 -->
+<select id="checkUserName" parameterType="String">
+	select * from user where user_Name=#{user_Name}
+</select>
+<insert id="addUser" parameterType="User">
+		insert into user(user_Name,user_Password,user_Tel,user_Email) values(#{user_Name},#{user_Password},#{user_Tel},#{user_Email})
+</insert>
+ <resultMap type="User" id="userList">
+				<result property="user_Id" column="user_Id"/>
+				<result property="user_Name" column="user_Name"/>
+				<result property="user_Password" column="user_Password"/>
+				<result property="user_Phone" column="user_Phone"/>
+				<result property="user_Email" column="user_Email"/>
+	     </resultMap>
+	     <select id="getUserList" resultMap="userList">
+	         select u.* from user u
+	     </select>
+</mapper>

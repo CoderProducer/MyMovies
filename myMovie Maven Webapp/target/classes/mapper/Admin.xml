@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.movie.dao.AdminLoginDao">
+         <resultMap type="Admin" id="adminList">
+				<result property="admin_Name" column="admin_Name"/>
+				<result property="admin_Password" column="admin_Password"/>							
+				<result property="admin_Id" column="admin_Id"/>
+	     </resultMap>
+	     <select id="adminLogin" resultMap="adminList">
+	         select adm.* from admin adm where admin_Name=#{admin_Name}
+	     </select>
+	     
+	   
+</mapper>

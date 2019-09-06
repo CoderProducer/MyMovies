@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.VideoSearchDao">
+         <resultMap type="Video" id="videoList">
+         	<id property="video_Id" column="video_Id"/>
+			<result property="video_Name" column="video_Name"/>
+			<result property="video_BigType" column="video_BigType"/>
+			<result property="video_SmallType" column="video_SmallType"/>
+			<result property="video_Season" column="video_Season"/>
+			<result property="video_PictureAddress" column="video_PictureAddress"/>
+			<result property="video_Introduce" column="video_Introduce"/>
+			<result property="video_Director" column="video_Director"/>
+			<result property="video_Duration" column="video_Duration"/>
+			<result property="video_Address" column="video_Address"/>
+			<result property="video_Published" column="video_Published" javaType="java.sql.Date"/>
+			<result property="video_Point" column="video_Point"/>
+			<result property="video_HotPoint" column="video_HotPoint"/>
+			<result property="video_KeyWords" column="video_KeyWords"/>	
+			<result property="video_AgeTime" column="video_AgeTime"/>
+			<result property="video_Country" column="video_Country"/>					
+	     </resultMap>
+	     <select id="getVideoList" resultMap="videoList">
+	         select v.* from video v where video_Id=#{video_Id}
+	     </select>
+	     
+	     <!-- 根据选定的条件获取movie总数 -->	
+		<select id="getmovieCount" resultType="int" >
+       		select  count(*) from video
+       		<trim prefix="where" prefixOverrides="and|or">
+				<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+					and video_Country like CONCAT('%',#{video_Country},'%')
+				</if>
+				<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+					and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+				</if>	
+				<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+					and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+				</if>				
+				and video_BigType="电影"		
+			</trim>	
+    	</select>
+	     <!-- 根据选定的条件获取variety总数 -->	
+		<select id="getvarietyCount" resultType="int" >
+       		select  count(*) from video
+       		<trim prefix="where" prefixOverrides="and|or">
+				<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+					and video_Country like CONCAT('%',#{video_Country},'%')
+				</if>
+				<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+					and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+				</if>	
+				<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+					and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+				</if>				
+				and video_BigType="综艺"		
+			</trim>	
+    	</select>
+    	 <!-- 根据选定的条件获取tv总数 -->	
+		<select id="gettvCount" resultType="int" >
+       		select  count(*) from video
+       		<trim prefix="where" prefixOverrides="and|or">
+				<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+					and video_Country like CONCAT('%',#{video_Country},'%')
+				</if>
+				<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+					and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+				</if>	
+				<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+					and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+				</if>				
+				and video_BigType="电视剧"		
+			</trim>	
+    	</select>
+    	 <!-- 根据选定的条件获取comic总数 -->	
+		<select id="getcomicCount" resultType="int" >
+       		select  count(*) from video
+       		<trim prefix="where" prefixOverrides="and|or">
+				<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+					and video_Country like CONCAT('%',#{video_Country},'%')
+				</if>
+				<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+					and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+				</if>	
+				<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+					and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+				</if>				
+				and video_BigType="动漫"		
+			</trim>	
+    	</select>
+    	<!-- 根据选定的条件分页获取movie集合 -->
+	     <select id="getmovieByType" resultType="Video">
+	     <bind name="key_offset2" value="(currentPageNo-1)*pageSize"></bind>
+	     	select * from video
+	     	<trim prefix="where" prefixOverrides="and|or">	     		
+			<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+				and video_Country like CONCAT('%',#{video_Country},'%')
+			</if>
+			<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+				and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+			</if>
+			<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+				and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+			</if>			
+			and video_BigType="电影"					
+			</trim>	
+			limit #{key_offset2},#{pageSize}
+	     </select>
+	     <!-- 根据选定的条件分页获取variety集合 -->
+	     <select id="getvarietyByType" resultType="Video">
+	     <bind name="key_offset3" value="(currentPageNo-1)*pageSize"></bind>
+	     	select * from video
+	     	<trim prefix="where" prefixOverrides="and|or">	     		
+			<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+				and video_Country like CONCAT('%',#{video_Country},'%')
+			</if>
+			<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+				and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+			</if>
+			<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+				and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+			</if>			
+			and video_BigType="综艺"					
+			</trim>	
+			limit #{key_offset3},#{pageSize}
+	     </select>	    
+	     <!-- 根据选定的条件分页获取tv集合 -->
+	     <select id="gettvByType" resultType="Video">
+	     <bind name="key_offset4" value="(currentPageNo-1)*pageSize"></bind>
+	     	select * from video
+	     	<trim prefix="where" prefixOverrides="and|or">	     		
+			<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+				and video_Country like CONCAT('%',#{video_Country},'%')
+			</if>
+			<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+				and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+			</if>
+			<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+				and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+			</if>			
+			and video_BigType="电视剧"					
+			</trim>	
+			limit #{key_offset4},#{pageSize}
+	     </select>	    
+	     <!-- 根据选定的条件分页获取comic集合 -->
+	     <select id="getcomicByType" resultType="Video">
+	     <bind name="key_offset5" value="(currentPageNo-1)*pageSize"></bind>
+	     	select * from video
+	     	<trim prefix="where" prefixOverrides="and|or">	     		
+			<if test="video_Country!=null and video_Country!='' and video_Country!='全部'">
+				and video_Country like CONCAT('%',#{video_Country},'%')
+			</if>
+			<if test="video_SmallType!=null and video_SmallType!='' and video_SmallType!='全部'">
+				and video_SmallType like CONCAT('%',#{video_SmallType},'%')
+			</if>
+			<if test="video_AgeTime!=null and video_AgeTime!='' and video_AgeTime!='全部'">
+				and video_AgeTime like CONCAT('%',#{video_AgeTime},'%')
+			</if>			
+			and video_BigType="动漫"					
+			</trim>	
+			limit #{key_offset5},#{pageSize}
+	     </select>
+	     <!-- 按评分获取12部电影放到首页 -->
+	     <select id="getMovieByPoints" resultType="Video">
+	     	select * from video where video_BigType="电影" order by video_Point DESC limit 12
+	     </select>	
+	     <!-- 按热点获取12部电影放到首页 -->
+	     <select id="getMovieByHotPoints" resultType="Video">
+	     	select * from video where video_BigType="电影" order by video_HotPoint DESC limit 12
+	     </select>
+	     <!-- 按时间先后获取12部电影放到首页-->
+	     <select id="getMovieByTime" resultType="Video">
+	     	select * from video where video_BigType="电影" order by video_Published DESC limit 12
+	     </select>  
+	     <!-- 随机获取5部电影放到首页轮播处-->
+	     <select id="getMovieRandom" resultType="Video">
+	     SELECT * FROM video WHERE video_BigType="电影" and video_Id >= ((SELECT MAX(video_Id) 
+	     FROM video WHERE video_BigType="电影")-(SELECT MIN(video_Id) FROM video WHERE video_BigType="电影")) * RAND() 
+	     + (SELECT MIN(video_Id) FROM video WHERE video_BigType="电影")  LIMIT 5
+	     </select>    
+	      <!-- 随机获取9部电影放到首页-->
+	     <select id="getMovieRandom2" resultType="Video">
+	     SELECT * FROM video WHERE video_BigType="电影" and video_Id >= ((SELECT MAX(video_Id) 
+	     FROM video WHERE video_BigType="电影")-(SELECT MIN(video_Id) FROM video WHERE video_BigType="电影")) * RAND() 
+	     + (SELECT MIN(video_Id) FROM video WHERE video_BigType="电影")  LIMIT 9
+	     </select>
+	     <!-- 根据videoId获取视频详情 -->
+	      <!-- 
+	    <resultMap type="com.movie.pojo.VideoActor" id="videoActorResultMap3">
+	        <id property="va_Id" column="va_Id" />    	
+		    <result property="videoId" column="videoId" />
+		    <result property="actorId" column="actorId"/>
+		    
+	        <association property="video" javaType="com.movie.pojo.Video">
+	        	<id property="video_Id" column="video_Id"/>
+				<result property="video_Name" column="video_Name"/>
+				<result property="video_BigType" column="video_BigType"/>
+				<result property="video_SmallType" column="video_SmallType"/>
+				<result property="video_Season" column="video_Season"/>
+				<result property="video_PictureAddress" column="video_PictureAddress"/>
+				<result property="video_Introduce" column="video_Introduce"/>
+				<result property="video_Director" column="video_Director"/>
+				<result property="video_Duration" column="video_Duration"/>
+				<result property="video_Address" column="video_Address"/>
+				<result property="video_Published" column="video_Published" javaType="java.sql.Date"/>
+				<result property="video_Point" column="video_Point"/>
+				<result property="video_HotPoint" column="video_HotPoint"/>
+				<result property="video_KeyWords" column="video_KeyWords"/>	
+				<result property="video_AgeTime" column="video_AgeTime"/>
+				<result property="video_Country" column="video_Country"/>	        			         
+	        </association> 
+	         -->
+	        <!-- ofType指定video集合中的对象类型 -->
+	        <resultMap type="com.movie.pojo.Video" id="videoActorResultMap3">
+	            <id property="video_Id" column="video_Id"/>
+				<result property="video_Name" column="video_Name"/>
+				<result property="video_BigType" column="video_BigType"/>
+				<result property="video_SmallType" column="video_SmallType"/>
+				<result property="video_Season" column="video_Season"/>
+				<result property="video_PictureAddress" column="video_PictureAddress"/>
+				<result property="video_Introduce" column="video_Introduce"/>
+				<result property="video_Director" column="video_Director"/>
+				<result property="video_Duration" column="video_Duration"/>
+				<result property="video_Address" column="video_Address"/>
+				<result property="video_Published" column="video_Published" javaType="java.sql.Date"/>
+				<result property="video_Point" column="video_Point"/>
+				<result property="video_HotPoint" column="video_HotPoint"/>
+				<result property="video_KeyWords" column="video_KeyWords"/>	
+				<result property="video_AgeTime" column="video_AgeTime"/>
+				<result property="video_Country" column="video_Country"/>	     
+	        <!-- ofType指定actor集合中的对象类型 -->
+	        <collection property="actorList" ofType="com.movie.pojo.Actor">
+	            <id property="actor_Id" column="actor_Id"/>
+				<result property="actor_Name" column="actor_Name"/>	
+	        </collection>
+	    </resultMap>
+	     
+		<select id="findDetailByVideoId" parameterType="int" resultMap="videoActorResultMap3">
+			select * from videoactor via, actor a,video v 
+			where via.actorId=a.actor_Id and via.videoId=v.video_Id  and via.videoId=#{videoId}		 
+	    </select>
+	    <!--
+	    <select id="findDetailByVideoId" parameterType="int" resultMap="videoActorResultMap3">	 
+		    select * from video v 
+		    inner join videoactor via on v.video_Id=via.videoId
+		    inner join actor a on via.actorId=a.actor_Id
+		    and v.video_Id=#{videoId}
+	    </select>
+	    -->
+	    <!-- 管理员管理分页视频 -->
+	    <select id="selectVideoWithAdmin" resultType="Video" parameterType="int">
+	    	select * from video order by video_Published limit #{startPos},#{pageSize}
+	    </select>
+	    <!-- 管理员界面管理的视频数目 -->
+	    <select id="selectVideoCountWithAdmin" resultType="int">
+	    	select count(*) from video
+	    </select>
+	    <!--管理员根据videoID数组批量删除视频  -->
+		<delete id="delVideoByvideoIdArrayWithAdmin">
+			delete from video
+			where video_Id in
+			<foreach collection="video_IdArrayAdmin" item="video_IdArrayAdmin" open="(" close=")" separator=",">
+				#{video_IdArrayAdmin}
+			</foreach>
+		</delete>
+</mapper>
